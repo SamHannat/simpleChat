@@ -66,16 +66,71 @@ public class ChatClient extends AbstractClient
    */
   public void handleMessageFromClientUI(String message)
   {
-    try
-    {
-      sendToServer(message);
+
+    if(message.strip().charAt(0) == '#') {
+      message = message.strip();
+      switch(message) {
+        case "#quit":
+          quit();
+        case "#logoff":
+          try {
+            closeConnection();
+          } catch (IOException e) {
+            System.out.println("An error occurred while trying to disconnect from the server.");
+          }
+          break;
+        case "#login":
+          // do the thing
+          if(isConnected()) {
+            System.out.println("Already connected to a client.");
+          } else {
+            try {
+              openConnection();
+              System.out.println("Connected to client.");
+            } catch (IOException e) {
+              System.out.println("Unable to connect to client " + getHost() + ":" + getPort());
+            }
+          }
+          break;
+        case "#gethost":
+          System.out.println(getHost());
+          break;
+          case "#getport":
+          System.out.println(getPort());
+          break;
+        default:
+          if (message.startsWith("#sethost")) {
+            try {
+              setHost(message.split(" ")[1]);
+            } catch (Exception e) {
+              System.out.println("Invalid host.");
+            }
+
+          } else if (message.startsWith("#setport")) {
+            try {
+              setPort(Integer.parseInt(message.split(" ")[1]));
+            } catch (Exception e) {
+              System.out.println("Invalid port.");
+            }
+
+          } else {
+            System.out.println("Unknown command.");
+          }
+      }
+    } else {
+      try
+      {
+        sendToServer(message);
+      }
+      catch(IOException e)
+      {
+        clientUI.display
+                ("Could not send message to server.  Terminating client.");
+        quit();
+      }
     }
-    catch(IOException e)
-    {
-      clientUI.display
-        ("Could not send message to server.  Terminating client.");
-      quit();
-    }
+
+
   }
 
   /**
@@ -83,8 +138,7 @@ public class ChatClient extends AbstractClient
    */
   @Override
   public void connectionClosed() {
-    clientUI.display("The server has shut down");
-    System.exit(0);
+    clientUI.display("The connection to the server has closed.");
   }
 
   /**
