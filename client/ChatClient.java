@@ -77,7 +77,16 @@ public class ChatClient extends AbstractClient
       quit();
     }
   }
-  
+
+  /**
+   * This method handles the server getting shut down.
+   */
+  @Override
+  public void connectionClosed() {
+    clientUI.display("The server has shut down");
+    System.exit(0);
+  }
+
   /**
    * This method terminates the client.
    */

@@ -113,12 +113,13 @@ public class ClientConsole implements ChatIF
   /**
    * This method is responsible for the creation of the Client UI.
    *
-   * @param args[0] The host to connect to.
+   * @param args[0] The host to connect to
+   * @param args[1] The default port
    */
   public static void main(String[] args) 
   {
     String host = "";
-
+    int port = DEFAULT_PORT;
 
     try
     {
@@ -128,7 +129,14 @@ public class ClientConsole implements ChatIF
     {
       host = "localhost";
     }
-    ClientConsole chat= new ClientConsole(host, DEFAULT_PORT);
+
+    try {
+      port = Integer.parseInt(args[1]);
+    } catch (Exception e) {
+      System.out.println("No port was specified default to " + DEFAULT_PORT);
+    }
+
+    ClientConsole chat= new ClientConsole(host, port);
     chat.accept();  //Wait for console data
   }
 }

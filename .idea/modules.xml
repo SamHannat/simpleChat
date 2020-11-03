@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$USER_HOME$/Downloads/OCSF/OCSF.iml" filepath="$USER_HOME$/Downloads/OCSF/OCSF.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/simpleChat.iml" filepath="$PROJECT_DIR$/.idea/simpleChat.iml" />
+    </modules>
+  </component>
+</project>
