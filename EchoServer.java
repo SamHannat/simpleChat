@@ -48,8 +48,27 @@ public class EchoServer extends AbstractServer
   public void handleMessageFromClient
     (Object msg, ConnectionToClient client)
   {
-    System.out.println("Message received: " + msg + " from " + client);
-    this.sendToAllClients(msg);
+    String loginid;
+    if (((String)msg).startsWith("#login ")) {
+
+        if((String)client.getInfo("loginid") != null) {
+          try {
+            client.sendToClient("You have already logged in. Now disconnecting.");
+            client.close();
+          } catch (Exception e) {
+            System.out.println("Unknown error while disconnecting user.");
+          }
+        } else {
+          loginid = ((String) msg).split(" ")[1];
+          loginid = loginid.substring(1,loginid.length()-1);
+          client.setInfo("loginid", loginid);
+        }
+    }
+    loginid = (String)client.getInfo("loginid");
+    System.out.println("Message received: " + msg + " from " + loginid);
+    this.sendToAllClients(loginid+": "+msg);
+
+
   }
     
   /**
@@ -89,10 +108,16 @@ public class EchoServer extends AbstractServer
    *
    * @param client the connection with the client.
    */
+  @Override
   synchronized public void clientDisconnected(
           ConnectionToClient client) {
-    System.out.println("Client \"" + client.toString() + "\" has disconnected.");
+    System.out.println("Abnormal termination of connection.");
 
+  }
+
+  @Override
+  protected synchronized void clientException(ConnectionToClient client, Throwable exception) {
+    System.out.println("hi");
   }
 
   //Class methods ***************************************************

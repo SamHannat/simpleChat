@@ -48,6 +48,7 @@ public class ServerConsole implements ChatIF {
                             break;
                         case "#stop":
                             server.stopListening();
+                            server.sendToAllClients("WARNING - The server has stopped listening for connections\nSERVER SHUTTING DOWN! DISCONNECTING!");
                             break;
                         case "#close":
                             server.close();

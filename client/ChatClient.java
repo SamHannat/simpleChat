@@ -25,9 +25,12 @@ public class ChatClient extends AbstractClient
    * The interface type variable.  It allows the implementation of 
    * the display method in the client.
    */
-  ChatIF clientUI; 
+  ChatIF clientUI;
 
-  
+  /**
+   * Keeps track of login
+   */
+  String loginid;
   //Constructors ****************************************************
   
   /**
@@ -38,12 +41,14 @@ public class ChatClient extends AbstractClient
    * @param clientUI The interface type variable.
    */
   
-  public ChatClient(String host, int port, ChatIF clientUI) 
+  public ChatClient(String loginid, String host, int port, ChatIF clientUI)
     throws IOException 
   {
     super(host, port); //Call the superclass constructor
     this.clientUI = clientUI;
+    this.loginid = loginid;
     openConnection();
+    this.sendToServer("#login <" + loginid + ">");
   }
 
   
@@ -68,6 +73,7 @@ public class ChatClient extends AbstractClient
   {
 
     if(message.strip().charAt(0) == '#') {
+      String tmp;
       message = message.strip();
       switch(message) {
         case "#quit":
@@ -100,15 +106,20 @@ public class ChatClient extends AbstractClient
           break;
         default:
           if (message.startsWith("#sethost")) {
+
             try {
-              setHost(message.split(" ")[1]);
+              tmp = message.split(" ")[1];
+              setHost(tmp);
+              System.out.println("Host set to: " + tmp);
             } catch (Exception e) {
               System.out.println("Invalid host.");
             }
 
           } else if (message.startsWith("#setport")) {
             try {
-              setPort(Integer.parseInt(message.split(" ")[1]));
+              int temp = Integer.parseInt(message.split(" ")[1]);
+              setPort(temp);
+              System.out.println("port set to: " + temp);
             } catch (Exception e) {
               System.out.println("Invalid port.");
             }
@@ -138,7 +149,13 @@ public class ChatClient extends AbstractClient
    */
   @Override
   public void connectionClosed() {
-    clientUI.display("The connection to the server has closed.");
+    clientUI.display("Your connection to the server has closed.");
+  }
+
+  @Override
+  protected void connectionException(Exception exception) {
+    System.out.println("Server has disconnected. Disconnecting...");
+    quit();
   }
 
   /**
